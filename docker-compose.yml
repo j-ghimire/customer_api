@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:16
+
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - ./app/sql/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    restart: always
+
+volumes:
+  postgres_data:
